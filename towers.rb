@@ -22,8 +22,13 @@ class TowerOfHanoi
       board[x-1][0] = x
     end
 
-    render(board)
+=begin
+    until win?(board)
+      #print current state
+      render(board)
 
+    end
+=end
   end
 
   #checks for win condition
@@ -39,7 +44,14 @@ class TowerOfHanoi
   end
 
   #checks for valid user inputs
-  def valid_input?
+  def valid_input?(user_input)
+    #use REGEX to check for proper inputs
+    proper_input = /\[[123],[123]\]/
+    if proper_input.match(user_input.to_s)
+      return true
+    else
+      return false
+    end
   end
 
   #prints board state
@@ -55,6 +67,7 @@ class TowerOfHanoi
       puts
     end
     puts
+    #prints tower numbers
     state.each_with_index do |value, index|
       print index.to_s.ljust(@disk + 2, " ")
     end
@@ -66,5 +79,6 @@ class TowerOfHanoi
 
 end
 
+#Run the game for test purposes
 t = TowerOfHanoi.new(3)
 t.play
