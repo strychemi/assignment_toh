@@ -27,8 +27,15 @@ class TowerOfHanoi
   end
 
   #checks for win condition
-  def win?
-    true
+  def win?(state)
+    #initialize win 2D array state
+    win_board = Array.new(3) { Array.new(@disk, 0) }
+    #Fill right column with disk numbers
+    (1..@disk).each do |x|
+      win_board[x-1][2] = x
+    end
+
+    return state == win_board
   end
 
   #checks for valid user inputs
