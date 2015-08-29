@@ -7,15 +7,19 @@ class TowerOfHanoi
 
   def play
     #Prints intro
+    puts
     puts "Welcome to Tower of Hanoi!"
+    puts
     puts "Instructions:"
     puts "Enter where you'd like to move from and to"
     puts "in the format [1,3]. Type 'quit' to end."
+    puts
 
     #initialize board as 2D array
     board = Array.new(3) { Array.new(@disk, 0) }
-    board[0].each_with_index do |value, index|
-      board[0][index] = @disk - index
+    #Fill left column with disk numbers
+    (1..@disk).each do |x|
+      board[x-1][0] = x
     end
 
     render(board)
@@ -33,10 +37,22 @@ class TowerOfHanoi
 
   #prints board state
   def render(state)
-    state.each do |tower|
-      print tower.inspect
+    puts "Current Board:"
+    puts
+    #prints board
+    state.each do |row|
+      row.each do |col|
+        disk_print = "o" * col
+        print disk_print.ljust(@disk + 2, " ")
+      end
       puts
     end
+    puts
+    state.each_with_index do |value, index|
+      print index.to_s.ljust(@disk + 2, " ")
+    end
+    puts
+    puts
 
   end
 
