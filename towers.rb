@@ -12,34 +12,55 @@ class TowerOfHanoi
     puts
     puts "Instructions:"
     puts "Enter where you'd like to move from and to"
-    puts "in the format [1,3]. Type 'quit' to end."
+    puts "in the format [1,3]. Enter 'quit' to end."
     puts
 
-    #initialize board as 2D array
-    board = Array.new(3) { Array.new(@disk, 0) }
+    #initialize first tower
+    board = []
     #Fill left column with disk numbers
     (1..@disk).each do |x|
-      board[x-1][0] = x
+      board.push(@disk - x + 1)
+    end
+    #initialize other towers
+    board = [board, [], []]
+
+    catch(:quit) do
+      #game loop
+      until win?(board)
+        #print current state
+        render(board)
+        #check valid user inputs
+        is_valid = false
+        until is_valid
+          print "Make a move:"
+          move = gets.chomp
+          puts
+          if "quit" == move
+            throw(:quit)
+          elsif valid_input?(move)
+            is_valid = true
+          else
+            puts "NOT VALID INPUT"
+          end
+        end
+        #moves the disk and update board
+        board = process_move(move, board)
+      end
     end
 
-=begin
-    until win?(board)
-      #print current state
-      render(board)
-
-    end
-=end
+    #Print out victory condition
+    puts "you won!" if win?(board)
   end
 
   #checks for win condition
   def win?(state)
     #initialize win 2D array state
-    win_board = Array.new(3) { Array.new(@disk, 0) }
+    win_board = []
     #Fill right column with disk numbers
     (1..@disk).each do |x|
-      win_board[x-1][2] = x
+      win_board.push(@disk - x + 1)
     end
-
+    win_board = [[], [], win_board]
     return state == win_board
   end
 
@@ -58,25 +79,51 @@ class TowerOfHanoi
   def render(state)
     puts "Current Board:"
     puts
-    #prints board
-    state.each do |row|
-      row.each do |col|
-        disk_print = "o" * col
+    #prints disks
+    (2.downto(0)).each do |x|
+      disp_column = state.map { |row| row[x] }
+      disp_column.each do |y|
+        if y.is_a? Integer
+          disk_print = "o" * y
+        else
+          disk_print = ""
+        end
+
         print disk_print.ljust(@disk + 2, " ")
       end
       puts
     end
     puts
+
     #prints tower numbers
     state.each_with_index do |value, index|
-      print index.to_s.ljust(@disk + 2, " ")
+      print (index + 1).to_s.ljust(@disk + 2, " ")
     end
-    puts
-    puts
-
+    print "\n\n"
   end
 
+  #processes disk user move
+  def process_move(move, state)
+    from = move[1].to_i - 1
+    to = move[3].to_i - 1
 
+    #check if there's a disk to move
+    if state[from].first == nil
+      puts "There's no disk in tower #{from + 1}!"
+    #check if destination tower has space
+    elsif state[to].length == @disk
+      puts "Tower #{to + 1} is at full capacity!"
+    #check if "from" disk is smaller than "to" disk
+    elsif state[to].last != nil && state[from].last > state[to].last
+      puts "This disk is larger than the destination disk! Illegal move!"
+    #otherwise proceed to move the plates
+    else
+      state[to].push(state[from].last)
+      state[from].pop
+    end
+
+    return state
+  end
 end
 
 #Run the game for test purposes
